@@ -120,7 +120,7 @@ for i = 1:length(keys)
 
     end
 
-    fprintf(" Classe %s générée\n", key);
+    fprintf("✔ Classe %s générée\n", key);
 end
 
-disp(" dataset généré !");
+disp(" D !");
