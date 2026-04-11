@@ -1,2 +1,4 @@
-data/
-matlab/
+data/dataset_spectogram/
+matlab/16000/
+matlab/real_noise/
+matlab/dataset_spectogram/
