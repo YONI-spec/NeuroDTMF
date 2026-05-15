@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+from sklearn.model_selection import train_test_split
 def build_dataframe(dataset_dir: str) -> pd.DataFrame :
     extensions = {".png",".jpeg",".jpg"}
     path = Path(dataset_dir)
@@ -24,9 +25,25 @@ def build_dataframe(dataset_dir: str) -> pd.DataFrame :
                 }
                
                 )
-        if not records:
-            raise ValueError(f"Aucune image trouvée dans {dataset_dir}")
+    if not records:
+        raise ValueError(f"Aucune image trouvée dans {dataset_dir}")
 
     df = pd.DataFrame(records,columns=["filepath", "label"])
     return df 
+
+
+
+def split_dataframe(
+    df:pd.DataFrame, 
+    val_split:float = 0.15, 
+    test_split: float = 0.15, 
+    seed: int = 42) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+
+    train_df,temp_df = train_test_split(df,test_size=(val_split + test_split),random_state=seed,stratify=df['label'])
+
+    val_df,test_df = train_test_split(temp_df,test_size=(test_split / (val_split + test_split)),random_state=seed,stratify=temp_df['label'])
+
+    return train_df,val_df,test_df
+
+
 

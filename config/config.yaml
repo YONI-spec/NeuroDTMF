@@ -1,0 +1,51 @@
+project:
+  name: "neuro_dtmf"
+  run_id: "run_001"
+  seed: 42
+
+paths:
+  dataset_dir: "/content/drive/MyDrive/NeuroDTMF/dataset_spectrogram"
+  output_dir : "/content/drive/MyDrive/NeuroDTMF/outputs"
+  model_dir: "/content/drive/MyDrive/NeuroDTMF/outputs/models"
+
+data:
+  img_size:  [128,128]
+  batch_size: 32
+  val_split: 0.15
+  test_split : 0.15
+  channel : 1
+
+
+model:
+  architecture: "cnn_v1"
+  input_shape : [128,128,1]
+  num_classes : 17
+
+
+  conv_blocks :
+    - filters : 32
+    - filters : 64
+    - filters : 128
+    - filters : 256
+
+  dense_units : 256
+  dropout_rate: 0.4
+  l2_reg : 1.0e-4
+
+
+training:
+  epochs: 50
+  learning_rate: 1.0e-3
+  clipnorm: 1.0             
+ 
+  
+  early_stopping:
+    patience: 7
+    monitor: "val_loss"
+ 
+  reduce_lr:
+    factor: 0.5
+    patience: 3
+    min_lr: 1.0e-6
+    monitor: "val_loss"
+ 
