@@ -57,7 +57,7 @@ def split_dataframe(
 
 
 
-def build_tf_dataset(df:pd.DataFrame, batch_size:int)-> tf.data.Dataset:
+def build_tf_dataset(df:pd.DataFrame, batch_size:int,shuffle=False)-> tf.data.Dataset:
     ds = tf.data.Dataset.from_slices(
         (
             df["filepath"].values,
@@ -75,6 +75,9 @@ def build_tf_dataset(df:pd.DataFrame, batch_size:int)-> tf.data.Dataset:
         return image, label
     
     ds = ds.map(load_image,num_parallel_calls = tf.data.AUTOTUNE)
+
+    if shuffle:
+        ds = ds.shuffle(buffer_size=len(df))
 
     ds = ds.batch(batch_size)
 

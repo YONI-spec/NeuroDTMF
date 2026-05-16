@@ -7,6 +7,7 @@ paths:
   dataset_dir: "/content/drive/MyDrive/NeuroDTMF/dataset_spectrogram"
   output_dir : "/content/drive/MyDrive/NeuroDTMF/outputs"
   model_dir: "/content/drive/MyDrive/NeuroDTMF/outputs/models"
+  log_dir: "/content/drive/MyDrive/NeuroDTMF/outputs/logs"
 
 data:
   img_size:  [128,128]
