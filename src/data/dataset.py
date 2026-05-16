@@ -1,7 +1,10 @@
 import pandas as pd
 from pathlib import Path
 from sklearn.model_selection import train_test_split
-def build_dataframe(dataset_dir: str) -> pd.DataFrame :
+import tensorflow as tf
+
+
+def build_dataframe(dataset_dir: str) -> tuple[pd.DataFrame,dict]:
     extensions = {".png",".jpeg",".jpg"}
     path = Path(dataset_dir)
     if not path.exists():
@@ -29,7 +32,14 @@ def build_dataframe(dataset_dir: str) -> pd.DataFrame :
         raise ValueError(f"Aucune image trouvée dans {dataset_dir}")
 
     df = pd.DataFrame(records,columns=["filepath", "label"])
-    return df 
+
+    classes = sorted(df["label"].unique())
+
+    class_to_index = {cls: idx for idx, cls in enumerate(classes)}
+
+    df["label_int"] = df["label"].map(class_to_index)
+
+    return df , class_to_index
 
 
 
@@ -47,3 +57,27 @@ def split_dataframe(
 
 
 
+def build_tf_dataset(df:pd.DataFrame, batch_size:int)-> tf.data.Dataset:
+    ds = tf.data.Dataset.from_slices(
+        (
+            df["filepath"].values,
+            df["label_int"].values
+        )
+    )
+
+    def load_image(filepath,label):
+        image = tf.io.read_file(filepath)
+
+        image = tf.image.decode_png(image,channels=1)
+
+        image = tf.image.convert_dtype(image, tf.float32)
+
+        return image, label
+    
+    ds = ds.map(load_image,num_parallel_calls = tf.data.AUTOTUNE)
+
+    ds = ds.batch(batch_size)
+
+    ds = ds.prefetch(tf.data.AUTOTUNE)
+
+    return ds
